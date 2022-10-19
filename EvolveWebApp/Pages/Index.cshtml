@@ -4,8 +4,8 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <form>
+<div class="text-center">    
+    <form method="post">
         <div class="mb-3">
             <div class="form-check form-check-inline">
                 <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
@@ -24,16 +24,26 @@
             </select>
         </div>
         <div class="mb-3 form-check">
-            <select class="form-select" aria-label="Default select example">
-                <option selected>Select User</option>
-                <option value="1000012345">Danish</option>
-                <option value="1000012345">Shalu</option>
-                <option value="1000012345">Arun</option>
-                <option value="1000012345">Satish</option>
-            </select>
+            <label for="firstName">Employee Id</label>
+            <input type="text" id="employeeID" name="employeeID" placeholder="Employee Id" />
+            <button type="submit" class="btn btn-primary">Get Employee Detail</button>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <div class="col-md-12">
+            <hr />
+            @{
+                List<UserRequest> lst = ViewData["UserRequest"] as List<UserRequest>;
+
+                if (lst != null)
+                {
+                    foreach (var item in lst)
+                    {
+                        <p>@item.Name - @item.From.ToShortDateString() - @item.To.ToShortDateString()</p>
+                    }
+                }
+            }
+            <hr />
+        </div>        
     </form>
-   
-    
+
+
 </div>
