@@ -29,9 +29,9 @@ namespace AssignRevokeUser
             if (EmployeeId != null)
             {
                 lst = new List<UserRequest>();
-                for (int i = 1; i < 4; i++)
+                for (int i = 0; i < 1; i++)
                 {
-                    lst.Add(new UserRequest() { EmployeeId = "10", Name = $"Employee {i}", From = DateTime.Now.AddDays(-i - 1), To = DateTime.Now.AddDays(-i) });
+                    lst.Add(new UserRequest() { EmployeeId = "1000038829", Name = "Satish Rathore", Dept = "ATM", From = DateTime.Now.AddDays(-i), To = DateTime.Now.AddDays(-i + 7) });
                 }
 
                 return (ActionResult)new OkObjectResult(lst);

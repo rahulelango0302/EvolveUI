@@ -1,8 +1,43 @@
 ﻿@page
 @model PrivacyModel
 @{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "VDI Usage Dashboard";
 }
-<h1>@ViewData["Title"]</h1>
+<h3>@ViewData["Title"]</h3>
+<br />
 
-<p>Use this page to detail your site's privacy policy.</p>
+<table class="table table-bordered table-responsive table-hover">
+    <tr>
+        <th>Employee Id </th>
+        <th>Employee Name </th>
+        <th>Dept</th>
+        <th>Account Name</th>
+        <th>Project Name</th>
+        <th>Location</th>
+        <th>CPU Usage</th>
+        <th>Memory Usage</th>
+        <th>Cost</th>
+        <th>Status</th>
+    </tr>
+    @{
+        List<UserDashboard> lst = ViewData["empData"] as List<UserDashboard>;
+
+        foreach (var d in lst)
+        {
+        <tr>
+            <td>@d.EmployeeId</td>
+            <td>@d.Name</td>
+            <td>@d.Dept</td>
+            <td>@d.AccountName</td>
+            <td>@d.ProjectName</td>
+            <td>@d.Location</td>
+            <td>@d.CPUUsage</td>
+            <td>@d.MemoryUsage</td>
+            <td>@d.Cost</td>
+            <td>@d.Status</td>
+
+        </tr>
+
+        }
+    }
+</table>  

@@ -10,6 +10,8 @@ namespace AssignRevokeUser
         [JsonProperty(PropertyName = "employeeId")]
         public string EmployeeId { get; set; }
         public string Name { get; set; }
+
+        public string Dept { get; set; }
         public DateTime From { get; set; }
         public DateTime To { get; set; }
     }

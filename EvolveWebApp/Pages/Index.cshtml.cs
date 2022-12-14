@@ -22,40 +22,52 @@ namespace EvolveWebApp.Pages
         public IndexModel(ILogger<IndexModel> logger, IOptions<AppSettings> settings)
         {
             _logger = logger;
-            _appSettings = settings.Value;
+            _appSettings = settings.Value;           
         }
 
         public void OnGet()
         {
-
+            ViewData["successMsg"] = null;
+            ViewData["UserRequest"] = null;
         }
 
         public async Task<IActionResult> OnPostAsync(string employeeID)
         {
-            var Url = _appSettings.AzureFunctionURL;
-
-            dynamic content = new { employeeId = employeeID };
-
-            //CancellationToken cancellationToken;
-
-
-            using (var client = new HttpClient())
-            using (var request = new HttpRequestMessage(HttpMethod.Post, Url))
-            using (var httpContent = CreateHttpContent(content))
+            ViewData["successMsg"] = null;
+            ViewData["UserRequest"] = null;
+            if (!string.IsNullOrEmpty(employeeID))
             {
-                request.Content = httpContent;
+                var Url = _appSettings.AzureFunctionURL;
 
-                using (var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
-                    .ConfigureAwait(false))
+                dynamic content = new { employeeId = employeeID };
+
+                //CancellationToken cancellationToken;
+
+
+                using (var client = new HttpClient())
+                using (var request = new HttpRequestMessage(HttpMethod.Post, Url))
+                using (var httpContent = CreateHttpContent(content))
                 {
+                    request.Content = httpContent;
 
-                    var resualtList = response.Content.ReadAsAsync<List<UserRequest>>();
+                    using (var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
+                        .ConfigureAwait(false))
+                    {
+
+                        var resualtList = response.Content.ReadAsAsync<List<UserRequest>>();
 
 
-                    ViewData["UserRequest"] = resualtList.Result;
+                        ViewData["UserRequest"] = resualtList.Result;
 
-                    return Page();
+                        return Page();
+                    }
                 }
+            }
+            else
+            {
+                ViewData["UserRequest"] = null;
+                ViewData["successMsg"] = "Lab created successfully, An email was sent with instructions for accessing lab !!";
+                return Page();
             }
 
         }
