@@ -8,6 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Identity.Web;
+using Microsoft.Graph;
+using Azure.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace EvolveWebApp
 {
@@ -25,6 +30,24 @@ namespace EvolveWebApp
         {
             services.AddRazorPages();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            //services.AddMicrosoftIdentityWebApiAuthentication(Configuration, "AzureAd").
+            //    EnableTokenAcquisitionToCallDownstreamApi().
+            //    AddInMemoryTokenCaches().
+            //    AddMicrosoftGraph(x =>
+            //    {
+            //        string tenantID = Configuration.GetValue<string>("AzureAD:TenantID");
+            //        string clientID = Configuration.GetValue<string>("AzureAD:ClientID");
+            //        string clientSecret = Configuration.GetValue<string>("AzureAD:ClientSecret");
+            //        ClientSecretCredential clientSecretCred = new ClientSecretCredential(tenantID, clientID, clientSecret);
+            //        return new GraphServiceClient(clientSecretCred);
+            //    },
+            //    new string[] { ".default" });
+
+            //services.AddMvc(options =>
+            //{
+            //    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+            //    options.Filters.Add(new AuthorizeFilter(policy));
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,7 +68,7 @@ namespace EvolveWebApp
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            //app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
