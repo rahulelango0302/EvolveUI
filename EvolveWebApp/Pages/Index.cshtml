@@ -39,9 +39,13 @@
                     {
                         <div class="alert alert-secondary" role="alert">
                             Lab UserName : @item.Name <br />
+                            EmployeeId : @item.EmployeeId <br />
+                            Object Id : @item.ObjectId <br />
+                            Dept : @item.Dept <br />
+                            Email : @item.Email <br />
                             Start Date : @item.From.ToShortDateString() <br />
                             End Date : @item.To.ToShortDateString() <br />
-                        </div>                                    
+                        </div>
                     }
                 }
             }
@@ -53,7 +57,7 @@
         <div class="col-md-12">
             <hr />
             @{
-                if (ViewData["successMsg"] !=null)
+                if (ViewData["successMsg"] != null)
                 {
                     <div class="alert alert-success" role="alert">
                         @ViewData["successMsg"]

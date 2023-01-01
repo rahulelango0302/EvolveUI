@@ -7,9 +7,11 @@ namespace EvolveWebApp
 {
     public class UserRequest
     {
+        public string ObjectId { get; set; }
         public string EmployeeId { get; set; }
         public string Name { get; set; }
         public string Dept { get; set; }
+        public string Email { get; set; }
         public DateTime From { get; set; }
         public DateTime To { get; set; }
     }

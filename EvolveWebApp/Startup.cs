@@ -30,6 +30,16 @@ namespace EvolveWebApp
         {
             services.AddRazorPages();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.AddMicrosoftIdentityWebAppAuthentication(Configuration).
+                EnableTokenAcquisitionToCallDownstreamApi(new string[] { "User.ReadWrite","User.ReadBasic.All", "User.Read" }).
+                AddInMemoryTokenCaches().AddMicrosoftGraph();
+
+            services.AddMvc(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+            });
+
             //services.AddMicrosoftIdentityWebApiAuthentication(Configuration, "AzureAd").
             //    EnableTokenAcquisitionToCallDownstreamApi().
             //    AddInMemoryTokenCaches().
@@ -68,7 +78,7 @@ namespace EvolveWebApp
             app.UseStaticFiles();
 
             app.UseRouting();
-            //app.UseAuthentication();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
