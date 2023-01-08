@@ -29,10 +29,29 @@ namespace EvolveWebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            //services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            //services.AddMicrosoftIdentityWebAppAuthentication(Configuration).
+            //    EnableTokenAcquisitionToCallDownstreamApi(new string[] { "User.ReadWrite","User.ReadBasic.All", "User.Read" }).
+            //    AddInMemoryTokenCaches().AddMicrosoftGraph();
+
+            //services.AddMvc(options =>
+            //{
+            //    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+            //    options.Filters.Add(new AuthorizeFilter(policy));
+            //});
+
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration).
-                EnableTokenAcquisitionToCallDownstreamApi(new string[] { "User.ReadWrite","User.ReadBasic.All", "User.Read" }).
-                AddInMemoryTokenCaches().AddMicrosoftGraph();
+                EnableTokenAcquisitionToCallDownstreamApi().
+                AddInMemoryTokenCaches().
+                AddMicrosoftGraph(x =>
+                {
+                    string tenantID = Configuration.GetValue<string>("AzureAD:TenantID");
+                    string clientID = Configuration.GetValue<string>("AzureAD:ClientID");
+                    string clientSecret = Configuration.GetValue<string>("AzureAD:ClientSecret");
+                    ClientSecretCredential clientSecretCred = new ClientSecretCredential(tenantID, clientID, clientSecret);
+                    return new GraphServiceClient(clientSecretCred);
+                },
+                new string[] { ".default" });
 
             services.AddMvc(options =>
             {
@@ -40,24 +59,8 @@ namespace EvolveWebApp
                 options.Filters.Add(new AuthorizeFilter(policy));
             });
 
-            //services.AddMicrosoftIdentityWebApiAuthentication(Configuration, "AzureAd").
-            //    EnableTokenAcquisitionToCallDownstreamApi().
-            //    AddInMemoryTokenCaches().
-            //    AddMicrosoftGraph(x =>
-            //    {
-            //        string tenantID = Configuration.GetValue<string>("AzureAD:TenantID");
-            //        string clientID = Configuration.GetValue<string>("AzureAD:ClientID");
-            //        string clientSecret = Configuration.GetValue<string>("AzureAD:ClientSecret");
-            //        ClientSecretCredential clientSecretCred = new ClientSecretCredential(tenantID, clientID, clientSecret);
-            //        return new GraphServiceClient(clientSecretCred);
-            //    },
-            //    new string[] { ".default" });
-
-            //services.AddMvc(options =>
-            //{
-            //    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-            //    options.Filters.Add(new AuthorizeFilter(policy));
-            //});
+            services.AddMemoryCache();
+            services.AddSession();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -75,8 +78,8 @@ namespace EvolveWebApp
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
-
+            app.UseStaticFiles();            
+            app.UseSession();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

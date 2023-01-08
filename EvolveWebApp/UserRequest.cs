@@ -26,4 +26,17 @@ namespace EvolveWebApp
         public string Cost { get; set; }
         public bool Status { get; set; }
     }
+
+    public class EvolveEnvironment
+    {
+        public int EnvironmentID { get; set; }
+        public string EnvironmentName { get; set; }       
+    }
+
+    public class EvolveSecurityGroup
+    {
+        public int GroupID { get; set; }
+        public string GroupName { get; set; }
+        public string GroupObjectID { get; set; }
+    }
 }

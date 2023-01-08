@@ -6,67 +6,86 @@
 
 <div class="text-center">
     <form method="post">
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/javascript">
+            $("body").on("change", "#ddlSecurityGroup", function () {
+                $("input[name=grpID]").val($(this).find("option:selected").val());
+            });
+        </script>
+        <input type="hidden" id="grpID" value="" name="grpID" />
         <div class="mb-3">
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                <label class="form-check-label" for="inlineCheckbox1">Practise</label>
+            <div class="mb-3 form-check">
+                <label for="firstName">Employee Id</label>
+                <input type="text" id="employeeID" name="employeeID" placeholder="Employee Id" />
+                <button type="submit" class="btn btn-primary">Get Employee Detail</button>
             </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                <label class="form-check-label" for="inlineCheckbox2">Assessment</label>
-            </div>
-        </div>
-        <div class="mb-3">
-            <select class="form-select" aria-label="Default select example">
-                <option selected>Select Security Group</option>
-                <option value="EvolveLabUser">EvolveLabUser</option>
-                <option value="MavericksLabUser">MavericksLabUser</option>
-            </select>
-        </div>
-        <div class="mb-3 form-check">
-            <label for="firstName">Employee Id</label>
-            <input type="text" id="employeeID" name="employeeID" placeholder="Employee Id" />
-            <button type="submit" class="btn btn-primary">Get Employee Detail</button>
-        </div>
-        <div class="col-md-12">
-            <hr />
-            @{
-                List<UserRequest> lst = ViewData["UserRequest"] as List<UserRequest>;
+            <div class="col-md-12">
+                @{
+                    List<UserRequest> lst = ViewData["UserRequest"] as List<UserRequest>;
 
-                if (lst != null)
-                {
-                    foreach (var item in lst)
+                    if (lst != null)
                     {
-                        <div class="alert alert-secondary" role="alert">
-                            Lab UserName : @item.Name <br />
-                            EmployeeId : @item.EmployeeId <br />
-                            Object Id : @item.ObjectId <br />
-                            Dept : @item.Dept <br />
-                            Email : @item.Email <br />
-                            Start Date : @item.From.ToShortDateString() <br />
-                            End Date : @item.To.ToShortDateString() <br />
-                        </div>
+                        foreach (var item in lst)
+                        {
+                    <div class="alert alert-secondary" role="alert">
+                        Lab UserName : @item.Name <br />
+                        EmployeeId : @item.EmployeeId <br />
+                        Object Id : @item.ObjectId <br />
+                        <input hidden="hidden" type="text" id="ObjectId" value="@item.ObjectId" name="ObjectId" placeholder="Employee Id" />
+                        Dept : @item.Dept <br />
+                        Email : @item.Email <br />
+                        Start Date : @item.From.ToShortDateString() <br />
+                        End Date : @item.To.ToShortDateString() <br />
+                    </div>
+                        }
                     }
                 }
-            }
-            <hr />
-        </div>
-        <div class="mb-3 form-check">
-            <button type="submit" class="btn btn-primary">Assign Lab</button>
-        </div>
-        <div class="col-md-12">
-            <hr />
+            </div>
             @{
-                if (ViewData["successMsg"] != null)
+                if (ViewData["objectId"] != null)
                 {
-                    <div class="alert alert-success" role="alert">
-                        @ViewData["successMsg"]
-                    </div>
+                <p>@ViewData["objectId"]</p>
+                <div class="form-check form-check-inline">
+                    @{
+                    TempData.Peek("environment");
+                    List<EvolveEnvironment> lstEnvironment = TempData["environment"] as List<EvolveEnvironment>;
+                        @foreach (var env in lstEnvironment)
+                    {
+                        <input class="form-check-input" type="checkbox" id="@env.EnvironmentID" value="@env.EnvironmentID">
+                        <label class="form-check-label" for="@env.EnvironmentID">@env.EnvironmentName</label>
+                    }
+                    }
+                </div>
+                <div class="mb-3">
+                    <select id="ddlSecurityGroup" class="form-select" aria-label="Default select example">
+                        <option selected>Select Security Group</option>
+                        @{
+                        TempData.Peek("securityGroup");
+                        List<EvolveSecurityGroup> lstSecurityGroup = TempData["securityGroup"] as List<EvolveSecurityGroup>;
+                            @foreach (var securityGroup in lstSecurityGroup)
+                        {
+                            <option value="@securityGroup.GroupObjectID">@securityGroup.GroupName</option>
+                        }
+                        }
+                    </select>
+                </div>
+                <div class="mb-3 form-check">
+                    <button type="submit" asp-page-handler="Assign" class="btn btn-success">Assign Employee Lab</button>
+                    &nbsp;&nbsp;
+                    <button type="submit" asp-page-handler="Remove" class="btn btn-danger">Remove Employee Lab</button>
+                </div>                
                 }
             }
-            <hr />
+            <div class="col-md-12">                
+                @{
+                    if (TempData["successMsg"] != null)
+                    {
+                    <div class="alert alert-success" role="alert">
+                        @TempData["successMsg"]
+                    </div>
+                    }
+                }
+            </div>
         </div>
     </form>
-
-
 </div>
