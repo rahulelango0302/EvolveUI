@@ -43,6 +43,7 @@ namespace EvolveWebApp.Pages
         private void GetDBObject()
         {
             string constr = _configuration.GetConnectionString("DefaultConnection");
+            //string constr = //Microsoft.key Microsoft.KeyVault(SecretUri = https://myvault.vault.azure.net/secrets/mysecret/ec96f02080254f109c51a1f14cdb1931)
 
             using (SqlConnection con = new SqlConnection(constr))
             {
@@ -90,9 +91,49 @@ namespace EvolveWebApp.Pages
             TempData["securityGroup"] = securityGroup;
         }
         public void OnGet()
-        {
+        {            
             ViewData["successMsg"] = null;
             ViewData["UserRequest"] = null;
+        }
+
+        public void sendEmail(string toAddress, bool isAssign)
+        {
+            var message = new Message
+            {
+                Subject = isAssign ? "Evolve Lab Created !! " : "Evolve Lab Deleted !! ",
+                Body = new ItemBody
+                {
+                    ContentType = BodyType.Text,
+                    Content = isAssign ? "Best of luck !!" : "Thanks you , will review and get back to you !!"
+                },
+                ToRecipients = new List<Recipient>()
+                {
+                        new Recipient
+                        {
+                            EmailAddress = new EmailAddress
+                            {
+                                Address = string.IsNullOrEmpty(toAddress) ? "satish.rathore@gmail.com" : toAddress.ToString()
+                            }
+                        }
+                },
+                CcRecipients = new List<Recipient>()
+                {
+                        new Recipient
+                        {
+                            EmailAddress = new EmailAddress
+                            {
+                                Address = "satishr@hexaware.com"
+                            }
+                        }
+                }
+            };
+
+            //var saveToSentItems = true;
+            _graphServiceClient
+                   .Users[_configuration.GetValue<string>("AppSettings:FromEmail")]
+                    .SendMail(message, true)
+                    .Request()
+                    .PostAsync().Wait();                     
         }
 
         private async Task<bool> checkIfUserExist(string objectId, string grpID)
@@ -121,10 +162,10 @@ namespace EvolveWebApp.Pages
 
             if (!isUserExist)
             {
-              
+
                 User userToAdd = await _graphServiceClient.Users[objectId].Request().GetAsync();
                 await _graphServiceClient.Groups[grpID].Members.References.Request().AddAsync(userToAdd);
-
+                this.sendEmail(userToAdd.Mail,true);
                 TempData["successMsg"] = TempData["employeeID"] + " added successfully, An email was sent with instructions for accessing lab !!";
             }
             else
@@ -144,8 +185,10 @@ namespace EvolveWebApp.Pages
             }
             bool isUserExist = await checkIfUserExist(objectId, grpID);
             if (isUserExist)
-            {               
+            {
+                User userToAdd = await _graphServiceClient.Users[objectId].Request().GetAsync();
                 await _graphServiceClient.Groups[grpID].Members[objectId].Reference.Request().DeleteAsync();
+                this.sendEmail(userToAdd.Mail, false);
                 TempData["successMsg"] = TempData["employeeID"] + " removed successfully, An email was sent with instructions for accessing lab !!";
             }
             else

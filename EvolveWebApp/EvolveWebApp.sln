@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvolveWebApp", "EvolveWebApp.csproj", "{F374291E-77EA-49DD-BF74-59BD50CD933F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssignRevokeUser", "..\AssignRevokeUser\AssignRevokeUser.csproj", "{6EAD6821-C221-41F4-8FE9-8651A324FD29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssignRevokeUser", "..\AssignRevokeUser\AssignRevokeUser.csproj", "{6EAD6821-C221-41F4-8FE9-8651A324FD29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

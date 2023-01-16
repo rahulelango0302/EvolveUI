@@ -17,6 +17,7 @@ namespace EvolveWebApp
     }
     public class UserDashboard : UserRequest
     {
+        public bool Selected { get; set; }
         public string AccountName { get; set; }
         public string ProjectName { get; set; }
         public string Location { get; set; }

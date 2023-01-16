@@ -1,0 +1,36 @@
+﻿@page
+@model EvolveWebApp.Pages.DeleteLabModel
+@{
+}
+@{
+    ViewData["Title"] = "Delete User Lab(s)";
+}
+<h3>@ViewData["Title"]</h3>
+<br />
+<button type="submit" asp-page-handler="Remove" class="btn btn-danger">Remove Lab</button>
+<br />
+<table class="table table-bordered table-responsive table-hover">
+    <tr>
+        <th>Select to Remove </th>
+        <th>Employee Id </th>
+        <th>Employee Name </th>
+        <th>Dept</th>
+        <th>Account Name</th>
+        <th>Status</th>
+    </tr>
+    @{
+        List<UserDashboard> lst = ViewData["empData"] as List<UserDashboard>;
+
+        foreach (var d in lst)
+        {
+        <tr>
+            <td><input type="checkbox" name="Selected" /></td>
+            <td>@d.EmployeeId</td>
+            <td>@d.Name</td>
+            <td>@d.Dept</td>
+            <td>@d.AccountName</td>
+            <td>@d.Status</td>
+        </tr>
+        }
+    }
+</table>  
