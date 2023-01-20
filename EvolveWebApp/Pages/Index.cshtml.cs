@@ -18,6 +18,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using EvolveWebApp.Model;
 
 namespace EvolveWebApp.Pages
 {
@@ -30,6 +31,9 @@ namespace EvolveWebApp.Pages
         private AppSettings _appSettings { get; set; }
         private List<EvolveEnvironment> environment = new List<EvolveEnvironment>();
         private List<EvolveSecurityGroup> securityGroup = new List<EvolveSecurityGroup>();
+
+        [BindProperty]
+        public FormModel FormModel { get; set; }
         public IndexModel(ILogger<IndexModel> logger, GraphServiceClient graphServiceClient,
             IOptions<AppSettings> settings, IConfiguration configuration, ITokenAcquisition tokenAcquisition)
         {
@@ -89,6 +93,7 @@ namespace EvolveWebApp.Pages
 
             TempData["environment"] = environment;
             TempData["securityGroup"] = securityGroup;
+
         }
         public void OnGet()
         {            
@@ -152,37 +157,61 @@ namespace EvolveWebApp.Pages
         }
         public async Task<IActionResult> OnPostAssign(string objectId, string grpID)
         {
-            if (string.IsNullOrEmpty(grpID))
+            /*if (string.IsNullOrEmpty(grpID))
             {
                 TempData["successMsg"] = "Select Security Group";
                 return RedirectToPage();
-            }
+            }*/
 
-            bool isUserExist = await checkIfUserExist(objectId, grpID);
-
-            if (!isUserExist)
+            /*if (FormModel.SecurityGroup == "1")
             {
+                ModelState.AddModelError("FormModel.SecurityGroup", "Please select a security group"); 
+            }*/
+            /*if (FormModel.Type == "false") { 
+                ModelState.AddModelError("FormModel.Type", "Please select a type");
+            }*/
+            objectId = FormModel.ObjectId;
+            if (ModelState.IsValid)
+            {
+                
+                bool isUserExist = await checkIfUserExist(objectId, grpID);
 
-                User userToAdd = await _graphServiceClient.Users[objectId].Request().GetAsync();
-                await _graphServiceClient.Groups[grpID].Members.References.Request().AddAsync(userToAdd);
-                this.sendEmail(userToAdd.Mail,true);
-                TempData["successMsg"] = TempData["employeeID"] + " added successfully, An email was sent with instructions for accessing lab !!";
+                
+
+                if (!isUserExist)
+                {
+
+                    User userToAdd = await _graphServiceClient.Users[objectId].Request().GetAsync();
+                    await _graphServiceClient.Groups[grpID].Members.References.Request().AddAsync(userToAdd);
+                    this.sendEmail(userToAdd.Mail, true);
+                    FormModel.Save(FormModel);
+                    TempData["successMsg"] = TempData["employeeID"] + " added successfully, An email was sent with instructions for accessing lab !!";
+                }
+                else
+                {
+                    TempData["successMsg"] = TempData["employeeID"] + " already exist in group !!";
+                }
+
+                return RedirectToPage();
             }
             else
             {
-                TempData["successMsg"] = TempData["employeeID"] + " already exist in group !!";
+                string id = FormModel.EmpId;
+               /* string s = FormModel.SecurityGroup;
+                string t = FormModel.Type;*/
+                return await  OnPostAsync(id);
+                
             }
-
-            return RedirectToPage();
         }
 
-        public async Task<IActionResult> OnPostRemove(string objectId, string grpID)
+            public async Task<IActionResult> OnPostRemove(string objectId, string grpID)
         {
-            if (string.IsNullOrEmpty(grpID))
+            /*if (string.IsNullOrEmpty(grpID))
             {
                 TempData["successMsg"] = "Select Security Group";
                 return RedirectToPage();
-            }
+            }*/
+            objectId = FormModel.ObjectId;
             bool isUserExist = await checkIfUserExist(objectId, grpID);
             if (isUserExist)
             {
@@ -199,9 +228,10 @@ namespace EvolveWebApp.Pages
             return RedirectToPage();
         }
 
-        public async Task<IActionResult> OnPostAsync(string employeeID, string grpID)
+        public async Task<IActionResult> OnPostAsync(string employeeID)
         {
             this.GetDBObject();
+
 
             if (string.IsNullOrEmpty(employeeID))
             {

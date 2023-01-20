@@ -4,8 +4,11 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
+<div class=" container d-flex justify-content-center ">
     <form method="post">
+         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script type="text/javascript">
             $("body").on("change", "#ddlSecurityGroup", function () {
@@ -13,79 +16,100 @@
             });
         </script>
         <input type="hidden" id="grpID" value="" name="grpID" />
-        <div class="mb-3">
-            <div class="mb-3 form-check">
+        <div class="mb-3  form-check ">
+            <div class="mb-3 form-check alert alert-secondary">
                 <label for="firstName">Employee Id</label>
                 <input type="text" id="employeeID" name="employeeID" placeholder="Employee Id" />
                 <button type="submit" class="btn btn-primary">Get Employee Detail</button>
             </div>
-            <div class="col-md-12">
+           
+        <div class="mb-3  form-check alert alert-secondary">
+            <div class=" col-md-12  ">
                 @{
+                    List<EvolveSecurityGroup> lstSecurityGroup = TempData["securityGroup"] as List<EvolveSecurityGroup>;
                     List<UserRequest> lst = ViewData["UserRequest"] as List<UserRequest>;
 
                     if (lst != null)
                     {
                         foreach (var item in lst)
                         {
-                    <div class="alert alert-secondary" role="alert">
-                        Lab UserName : @item.Name <br />
-                        EmployeeId : @item.EmployeeId <br />
-                        Object Id : @item.ObjectId <br />
-                        <input hidden="hidden" type="text" id="ObjectId" value="@item.ObjectId" name="ObjectId" placeholder="Employee Id" />
-                        Dept : @item.Dept <br />
-                        Email : @item.Email <br />
-                        Start Date : @item.From.ToShortDateString() <br />
-                        End Date : @item.To.ToShortDateString() <br />
-                    </div>
+                                                        <div class="alert alert-secondary" style="padding-left: 0px;" role="alert">
+                                Lab UserName :     @item.Name  <br />
+                                <input hidden=hidden  type="text" value="@item.Name" asp-for="FormModel.Name"  />  
+                                EmployeeId :      @item.EmployeeId <br />
+                                <input hidden=hidden  type="text"  value="@item.EmployeeId" asp-for="FormModel.EmpId"  type="text" />
+                                Object Id :     @item.ObjectId <br />  
+                                <input hidden=hidden type="text" value="@item.ObjectId" placeholder="Employee Id" asp-for="FormModel.ObjectId" />
+                                Dept :      @item.Dept <br />
+                                <input hidden=hidden type="text" id="dept" value="@item.Dept" asp-for="FormModel.Dept">
+                                Email :      @item.Email <br />
+                                <input hidden=hidden type="text" id="email" value="@item.Email" asp-for="FormModel.Email">
+                                            Start Date :  <input style=" margin-top: 5px;margin-bottom: 5px" type="date" id="startDate" value="@item.From.ToString("yyyy-MM-dd")" asp-for="FormModel.StartDate"><br />           
+                                            End Date :    <input style=" margin-top: 5px;margin-bottom: 5px" type="date" id="endDate" value="@item.To.ToString("yyyy-MM-dd")" asp-for="FormModel.EndDate"><br /> 
+                                            Ticket Number : <input style=" margin-top: 5px;margin-bottom: 5px" type="text" id="ticketno" asp-for="FormModel.TicketNumber"/><br />  
+                                            Location : <input style=" margin-top: 5px;margin-bottom: 5px" type="text" id="location" asp-for="FormModel.Location" />   <br />  
+                                            Comments :  <input style=" margin-top: 5px;margin-bottom: 5px" type="text" id="comments" asp-for="FormModel.Comments" /> <br />   
+                                            Training Name : <input style=" margin-top: 5px;margin-bottom: 5px" type="text" id="trainingname" asp-for="FormModel.TrainingName" /><br/>
+                                            Trainer Name : <input style="margin-top: 5px;margin-bottom: 5px" type="text" id="trainername" asp-for="FormModel.TrainerName" /><br/>
+
+                                </div>
                         }
                     }
+
                 }
-            </div>
+             </div>
             @{
                 if (ViewData["objectId"] != null)
                 {
-                <p>@ViewData["objectId"]</p>
-                <div class="form-check form-check-inline">
-                    @{
-                    TempData.Peek("environment");
-                    List<EvolveEnvironment> lstEnvironment = TempData["environment"] as List<EvolveEnvironment>;
-                        @foreach (var env in lstEnvironment)
-                    {
-                        <input class="form-check-input" type="checkbox" id="@env.EnvironmentID" value="@env.EnvironmentID">
-                        <label class="form-check-label" for="@env.EnvironmentID">@env.EnvironmentName</label>
-                    }
-                    }
-                </div>
-                <div class="mb-3">
-                    <select id="ddlSecurityGroup" class="form-select" aria-label="Default select example">
-                        <option selected>Select Security Group</option>
+
+
+                                         <div class="ml-3 form-check container  " style="margin-right:22px">
                         @{
-                        TempData.Peek("securityGroup");
-                        List<EvolveSecurityGroup> lstSecurityGroup = TempData["securityGroup"] as List<EvolveSecurityGroup>;
-                            @foreach (var securityGroup in lstSecurityGroup)
-                        {
-                            <option value="@securityGroup.GroupObjectID">@securityGroup.GroupName</option>
+
+                            List<EvolveEnvironment> lstEnvironment = TempData["environment"] as List<EvolveEnvironment>;
+                            @foreach (var env in lstEnvironment)
+                            {
+                                                <div >
+                                                                        <input class="form-check-input" type="checkbox" id="@env.EnvironmentID" value="@env.EnvironmentID" asp-for="FormModel.Type" required pattern="1|2">
+
+                                                                        <label class="form-check-label" for="@env.EnvironmentID">@env.EnvironmentName</label>
+                                   </div>
+                            }
                         }
-                        }
-                    </select>
-                </div>
-                <div class="mb-3 form-check">
-                    <button type="submit" asp-page-handler="Assign" class="btn btn-success">Assign Employee Lab</button>
-                    &nbsp;&nbsp;
-                    <button type="submit" asp-page-handler="Remove" class="btn btn-danger">Remove Employee Lab</button>
-                </div>                
+                                     <span asp-validation-for="FormModel.Type" class="text-danger"></span>
+                        </div>
+                                <div class="mb-3"  style="margin-left: 16px" >
+                                    <select id="ddlSecurityGroup" class="form-select" aria-label="Default select example" asp-for="FormModel.SecurityGroup" >
+                                                <option value="">Select Security Group</option>
+                            @{
+                                TempData.Peek("securityGroup");
+
+                                @foreach (var securityGroup in lstSecurityGroup)
+                                {
+                                            <option value="@securityGroup.GroupObjectID">@securityGroup.GroupName</option>
+                                }
+                            }
+                            </select>
+                                    <span asp-validation-for="FormModel.SecurityGroup" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <button type="submit" asp-page-handler="Assign" class="btn btn-success">Assign Employee Lab</button>
+                            &nbsp;&nbsp;
+                            <button type="submit" asp-page-handler="Remove" class="btn btn-danger">Remove Employee Lab</button>
+                        </div>                
                 }
             }
             <div class="col-md-12">                
                 @{
                     if (TempData["successMsg"] != null)
                     {
-                    <div class="alert alert-success" role="alert">
-                        @TempData["successMsg"]
-                    </div>
+                            <div class="alert alert-success" role="alert">
+                            @TempData["successMsg"]
+                            </div>
                     }
                 }
             </div>
+
         </div>
     </form>
 </div>
